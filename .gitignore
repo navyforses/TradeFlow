@@ -19,3 +19,15 @@ htmlcov/
 .pytest_cache/
 *.tar.gz
 *.whl
+
+# Legacy zipline files
+zipline/
+.travis.yml
+.appveyor.yml
+Vagrantfile
+vagrant_init.sh
+.pre-commit-config.yaml
+README.rst
+.github/ISSUE_TEMPLATE.md
+.github/workflows/ci.yaml
+.github/workflows/windows_ci.yml
