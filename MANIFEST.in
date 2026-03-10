@@ -1,0 +1,11 @@
+include LICENSE
+
+include etc/requirements*.txt
+include etc/requirements*.in
+recursive-include tradeflow *.pyi
+recursive-include tradeflow *.pxi
+recursive-include tradeflow *.pxd
+
+recursive-include tradeflow/resources *.*
+include versioneer.py
+include tradeflow/_version.py
