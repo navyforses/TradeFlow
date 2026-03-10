@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeFlow - Algorithmic Trading Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #111827;
+            --bg-card: #1a2332;
+            --accent: #00d4aa;
+            --accent-glow: rgba(0, 212, 170, 0.3);
+            --accent2: #3b82f6;
+            --accent3: #8b5cf6;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #1e293b;
+            --gradient-1: linear-gradient(135deg, #00d4aa, #3b82f6);
+            --gradient-2: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 212, 170, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 170, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .glow-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .glow-orb-1 {
+            width: 600px; height: 600px;
+            background: var(--accent);
+            top: -200px; right: -100px;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .glow-orb-2 {
+            width: 500px; height: 500px;
+            background: var(--accent2);
+            bottom: -150px; left: -100px;
+            animation: float 10s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -30px); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            background: rgba(10, 14, 23, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--accent); }
+
+        .btn-github {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .btn-github:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+        }
+
+        .hero-content { max-width: 800px; }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            background: rgba(0, 212, 170, 0.1);
+            border: 1px solid rgba(0, 212, 170, 0.2);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+        }
+
+        .badge-dot {
+            width: 6px; height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 .gradient-text {
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 0.9rem 2rem;
+            background: var(--gradient-1);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-size: 1rem;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 30px var(--accent-glow);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 40px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            padding: 0.9rem 2rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: rgba(0, 212, 170, 0.05);
+        }
+
+        /* Code preview */
+        .code-preview {
+            margin-top: 4rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            text-align: left;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.5rem;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-dot {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+        }
+        .code-dot.red { background: #ff5f57; }
+        .code-dot.yellow { background: #febc2e; }
+        .code-dot.green { background: #28c840; }
+
+        .code-header span {
+            margin-left: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .code-body {
+            padding: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+
+        .code-body .keyword { color: #c792ea; }
+        .code-body .func { color: #82aaff; }
+        .code-body .string { color: #c3e88d; }
+        .code-body .comment { color: #546e7a; }
+        .code-body .number { color: #f78c6c; }
+        .code-body .var { color: #ffcb6b; }
+
+        /* Stats */
+        .stats {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            padding: 3rem 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+
+        /* Features */
+        .features {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 4rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px rgba(0, 212, 170, 0.1);
+        }
+
+        .feature-icon {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .fi-1 { background: rgba(0, 212, 170, 0.15); }
+        .fi-2 { background: rgba(59, 130, 246, 0.15); }
+        .fi-3 { background: rgba(139, 92, 246, 0.15); }
+        .fi-4 { background: rgba(245, 158, 11, 0.15); }
+        .fi-5 { background: rgba(236, 72, 153, 0.15); }
+        .fi-6 { background: rgba(16, 185, 129, 0.15); }
+
+        .feature-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.7rem;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Indicators section */
+        .indicators {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem 6rem;
+        }
+
+        .indicator-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: center;
+            margin-top: 3rem;
+        }
+
+        .pill {
+            padding: 0.6rem 1.4rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            transition: all 0.3s;
+        }
+
+        .pill:hover {
+            border-color: var(--accent);
+            background: rgba(0, 212, 170, 0.08);
+            color: var(--accent);
+        }
+
+        /* CTA */
+        .cta {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 6rem 2rem;
+        }
+
+        .cta-box {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 4rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: var(--gradient-1);
+        }
+
+        .cta-box h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .cta-box p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1.05rem;
+        }
+
+        .install-cmd {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .stats { gap: 2rem; }
+            .features-grid { grid-template-columns: 1fr; }
+            .cta-box { padding: 2.5rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+
+    <nav>
+        <div class="nav-inner">
+            <div class="logo">TradeFlow</div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#indicators">Indicators</a></li>
+                <li><a href="#install">Install</a></li>
+            </ul>
+            <a href="https://github.com/navyforses/TradeFlow" class="btn-github" target="_blank">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                GitHub
+            </a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="badge">
+                <span class="badge-dot"></span>
+                Open Source Trading Platform
+            </div>
+            <h1>
+                Trade Smarter with<br>
+                <span class="gradient-text">TradeFlow</span>
+            </h1>
+            <p class="hero-desc">
+                Python-ზე დაფუძნებული ალგორითმული ტრეიდინგის პლატფორმა.
+                შექმენი, შეამოწმე და გაუშვი სავაჭრო სტრატეგიები რეალურ დროში.
+            </p>
+            <div class="hero-buttons">
+                <a href="#install" class="btn-primary">Get Started</a>
+                <a href="https://github.com/navyforses/TradeFlow" class="btn-secondary" target="_blank">View on GitHub</a>
+            </div>
+
+            <div class="code-preview">
+                <div class="code-header">
+                    <div class="code-dot red"></div>
+                    <div class="code-dot yellow"></div>
+                    <div class="code-dot green"></div>
+                    <span>strategy.py</span>
+                </div>
+                <div class="code-body">
+                    <span class="keyword">from</span> tradeflow.api <span class="keyword">import</span> <span class="func">order_target</span>, <span class="func">record</span>, <span class="func">symbol</span><br>
+                    <span class="keyword">from</span> tradeflow.indicators <span class="keyword">import</span> <span class="func">sma</span>, <span class="func">rsi</span><br><br>
+                    <span class="keyword">def</span> <span class="func">initialize</span>(<span class="var">context</span>):<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="var">context</span>.asset = <span class="func">symbol</span>(<span class="string">'AAPL'</span>)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="var">context</span>.lookback = <span class="number">20</span><br><br>
+                    <span class="keyword">def</span> <span class="func">handle_data</span>(<span class="var">context</span>, <span class="var">data</span>):<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;prices = <span class="var">data</span>.history(<span class="var">context</span>.asset, <span class="string">'price'</span>, <span class="number">50</span>, <span class="string">'1d'</span>)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;signal = <span class="func">sma</span>(prices, <span class="number">20</span>).iloc[-<span class="number">1</span>]<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> prices.iloc[-<span class="number">1</span>] > signal:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="func">order_target</span>(<span class="var">context</span>.asset, <span class="number">100</span>)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="func">record</span>(price=prices.iloc[-<span class="number">1</span>], sma=signal)
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-number">10+</div>
+            <div class="stat-label">Built-in Indicators</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">4</div>
+            <div class="stat-label">Ready Strategies</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">2</div>
+            <div class="stat-label">Languages (KA/EN)</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">450+</div>
+            <div class="stat-label">Source Files</div>
+        </div>
+    </div>
+
+    <section class="features" id="features">
+        <h2 class="section-title">Features</h2>
+        <p class="section-subtitle">ყველაფერი რაც გჭირდება ალგორითმული ტრეიდინგისთვის</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon fi-1">&#x1F4CA;</div>
+                <h3>Backtesting Engine</h3>
+                <p>ისტორიულ მონაცემებზე სტრატეგიების ტესტირება. შეამოწმე შენი იდეები რეალური ფულის რისკის გარეშე.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon fi-2">&#x26A1;</div>
+                <h3>Real-time Simulation</h3>
+                <p>რეალურ დროში სიმულაციის გაშვება ცოცხალი მონაცემებით. მონიტორინგი და ანალიზი პირდაპირ.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon fi-3">&#x1F9EA;</div>
+                <h3>Technical Indicators</h3>
+                <p>SMA, EMA, RSI, MACD, Bollinger Bands, ATR, VWAP, Momentum, Stochastic - ყველა ჩაშენებულია.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon fi-4">&#x1F3AF;</div>
+                <h3>Built-in Strategies</h3>
+                <p>MA Crossover, RSI Mean Reversion, Momentum, Bollinger Breakout - მზა სტრატეგიები დასაწყებად.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon fi-5">&#x1F1F0;&#x1F1EA;</div>
+                <h3>Georgian Localization</h3>
+                <p>სრული ქართული ლოკალიზაცია. ინტერფეისი, შეცდომის შეტყობინებები და დოკუმენტაცია ქართულ ენაზე.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon fi-6">&#x1F4E6;</div>
+                <h3>Pipeline API</h3>
+                <p>მონაცემების ტრანსფორმაცია, ფილტრაცია და ანალიზი Pipeline ინტერფეისით. მასშტაბირებადი არქიტექტურა.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="indicators" id="indicators">
+        <h2 class="section-title">Indicators & Strategies</h2>
+        <p class="section-subtitle">ტექნიკური ინდიკატორები და სავაჭრო სტრატეგიები</p>
+
+        <div class="indicator-pills">
+            <span class="pill">SMA</span>
+            <span class="pill">EMA</span>
+            <span class="pill">RSI</span>
+            <span class="pill">MACD</span>
+            <span class="pill">Bollinger Bands</span>
+            <span class="pill">ATR</span>
+            <span class="pill">VWAP</span>
+            <span class="pill">Momentum</span>
+            <span class="pill">Stochastic</span>
+            <span class="pill">MA Crossover</span>
+            <span class="pill">Mean Reversion</span>
+            <span class="pill">Breakout</span>
+        </div>
+    </section>
+
+    <section class="cta" id="install">
+        <div class="cta-box">
+            <h2>Ready to Trade?</h2>
+            <p>დააინსტალირე TradeFlow და დაიწყე ალგორითმული ტრეიდინგი დღესვე.</p>
+            <div class="install-cmd">$ pip install tradeflow</div>
+            <br><br>
+            <a href="https://github.com/navyforses/TradeFlow" class="btn-primary" target="_blank">View Documentation</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>Built by <a href="https://github.com/navyforses">Shako Jincharadze</a> | Apache 2.0 License</p>
+        <p style="margin-top: 0.5rem;">TradeFlow &copy; 2026</p>
+    </footer>
+</body>
+</html>
